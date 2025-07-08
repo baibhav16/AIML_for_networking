@@ -70,3 +70,7 @@ streamlit run app.py
 ## License
 
 MIT License
+
+## Authors
+Baibhav Kumar
+Hetav Desai
