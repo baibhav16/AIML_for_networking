@@ -5,12 +5,14 @@ import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 import joblib
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # === Step 1: Load the dataset ===
-df = pd.read_csv("train1.csv")  # Replace with your actual dataset file
+df = pd.read_csv(r"dataset/train1.csv")  # Replace with your actual dataset file
 df.columns = df.columns.str.strip()  # Clean column names
 
 print("📋 Columns in dataset:", df.columns.tolist())
@@ -79,3 +81,28 @@ joblib.dump(scaler, "model/scaler.pkl")
 joblib.dump(le, "model/label_encoder.pkl")
 
 print("📦 Tuned model, scaler, and label encoder saved to /model/")
+
+# === Step 11: Feature Importance Plot ===
+importances = model.feature_importances_
+indices = np.argsort(importances)[::-1]
+feature_names = X.columns
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x=importances[indices], y=feature_names[indices])
+plt.title("Feature Importances")
+plt.tight_layout()
+plt.savefig("model/feature_importances.png")
+plt.close()
+
+# === Step 12: Confusion Matrix Plot ===
+cm = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(6, 5))
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=le.classes_, yticklabels=le.classes_)
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.title("Confusion Matrix")
+plt.tight_layout()
+plt.savefig("model/confusion_matrix.png")
+plt.close()
+
+print("📊 Feature importance and confusion matrix plots saved to /model/")
