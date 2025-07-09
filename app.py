@@ -5,13 +5,13 @@ import numpy as np
 import pickle
 
 # Load model, scaler, and encoder using pickle
-with open("model/app_id_classifier.pkl", "rb") as f:
+with open(r"model/app_id_classifier.pkl", "rb") as f:
     model = pickle.load(f)
 
-with open("model/scaler.pkl", "rb") as f:
+with open(r"model/scaler.pkl", "rb") as f:
     scaler = pickle.load(f)
 
-with open("model/label_encoder.pkl", "rb") as f:
+with open(r"model/label_encoder.pkl", "rb") as f:
     label_encoder = pickle.load(f)
 
 # Get feature names used during training

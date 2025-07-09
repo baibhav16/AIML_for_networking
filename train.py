@@ -2,12 +2,11 @@
 
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.ensemble import RandomForestClassifier, IsolationForest
 from sklearn.metrics import accuracy_score, classification_report
-from sklearn.model_selection import GridSearchCV
-import joblib
+import pickle
 import os
 
 # === Step 1: Load dataset ===
@@ -23,14 +22,13 @@ if 'Label' not in df.columns:
 
 # === Step 3: Handle missing/infinite values ===
 df.replace([np.inf, -np.inf], np.nan, inplace=True)
-df.dropna(axis=1, thresh=len(df) * 0.9, inplace=True)  # Drop mostly empty columns
-df.dropna(inplace=True)  # Drop rows with missing values
+df.dropna(axis=1, thresh=len(df) * 0.9, inplace=True)
+df.dropna(inplace=True)
 
 # === Step 4: Separate features and label ===
 y = df['Label']
-X = df.drop(columns=['Label'])
-X = X.select_dtypes(include=[np.number])  # Keep only numeric features
-y = y[X.index]  # Align y with X
+X = df.drop(columns=['Label']).select_dtypes(include=[np.number])
+y = y[X.index]  # Align labels
 
 # === Step 5: Encode labels ===
 le = LabelEncoder()
@@ -75,13 +73,22 @@ anomaly_model = IsolationForest(n_estimators=100, contamination=0.01, random_sta
 anomaly_model.fit(normal_df_scaled)
 print("🛡️ Trained Isolation Forest for anomaly detection")
 
-# === Step 11: Save everything ===
+# === Step 11: Save everything using pickle ===
 os.makedirs("model", exist_ok=True)
-joblib.dump(model, "model/app_id_classifier.pkl")
-joblib.dump(scaler, "model/scaler.pkl")
-joblib.dump(le, "model/label_encoder.pkl")
-joblib.dump(anomaly_model, "model/anomaly_detector.pkl")
-joblib.dump(X_train.columns.tolist(), "model/feature_names.pkl")
 
+with open("model/app_id_classifier.pkl", "wb") as f:
+    pickle.dump(model, f)
 
-print("📦 Tuned model, scaler, label encoder, and anomaly detector saved to /model/")
+with open("model/scaler.pkl", "wb") as f:
+    pickle.dump(scaler, f)
+
+with open("model/label_encoder.pkl", "wb") as f:
+    pickle.dump(le, f)
+
+with open("model/anomaly_detector.pkl", "wb") as f:
+    pickle.dump(anomaly_model, f)
+
+with open("model/feature_names.pkl", "wb") as f:
+    pickle.dump(X_train.columns.tolist(), f)
+
+print("📦 Model, scaler, encoder, anomaly detector saved using pickle in /model/")
