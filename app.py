@@ -2,18 +2,24 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import joblib
+import pickle
 
-# Load model, scaler, and encoder
-model = joblib.load(r"model/app_id_classifier.pkl")
-scaler = joblib.load(r"model/scaler.pkl")
-label_encoder = joblib.load(r"model/label_encoder.pkl")
+# Load model, scaler, and encoder using pickle
+with open("model/app_id_classifier.pkl", "rb") as f:
+    model = pickle.load(f)
+
+with open("model/scaler.pkl", "rb") as f:
+    scaler = pickle.load(f)
+
+with open("model/label_encoder.pkl", "rb") as f:
+    label_encoder = pickle.load(f)
 
 # Get feature names used during training
 try:
     trained_features = model.feature_names_in_
 except AttributeError:
-    trained_features = joblib.load("model/feature_names.pkl")
+    with open("model/feature_names.pkl", "rb") as f:
+        trained_features = pickle.load(f)
 
 # Streamlit app
 st.set_page_config(page_title="Traffic Classifier", layout="wide")
