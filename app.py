@@ -5,9 +5,9 @@ import numpy as np
 import joblib
 
 # Load model, scaler, and encoder
-model = joblib.load("model/app_id_classifier.pkl")
-scaler = joblib.load("model/scaler.pkl")
-label_encoder = joblib.load("model/label_encoder.pkl")
+model = joblib.load(r"model/app_id_classifier.pkl")
+scaler = joblib.load(r"model/scaler.pkl")
+label_encoder = joblib.load(r"model/label_encoder.pkl")
 
 # Get feature names used during training
 try:
